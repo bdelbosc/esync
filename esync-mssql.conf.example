@@ -1,6 +1,6 @@
 nuxeo.db.user=nuxeo
 nuxeo.db.password=nuxeo
-nuxeo.db.jdbc.url=jdbc:jtds:sqlserver://192.168.56.102:1433/nuxeoacl;useCursors=true
+nuxeo.db.jdbc.url=jdbc:jtds:sqlserver://192.168.56.102:1433/nuxeo;useCursors=true
 nuxeo.db.driver=net.sourceforge.jtds.jdbc.Driver
 
 elasticsearch.addressList=localhost:9300
@@ -8,3 +8,9 @@ elasticsearch.indexName=nuxeo
 elasticsearch.clusterName=elasticsearch
 
 checker.pool.size=10
+
+## Skip these checkers
+## Especially the AclChecker must be disabled if you have lots of ACL and want a quick feedback
+#checker.blackList=AclChecker
+
+

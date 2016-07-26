@@ -1,10 +1,17 @@
+## Database access
 nuxeo.db.user=nuxeo
 nuxeo.db.password=nuxeo
 nuxeo.db.driver=org.postgresql.Driver
 nuxeo.db.jdbc.url=jdbc:postgresql://localhost:5432/nuxeo
 
+## Elasticsearch access
 elasticsearch.addressList=localhost:9300
+elasticsearch.clusterName=elastrix
 elasticsearch.indexName=nuxeo
-elasticsearch.clusterName=elasticsearch
 
 checker.pool.size=10
+
+## Skip these checkers
+## Especially the AclChecker must be disabled if you have lots of ACL and want a quick feedback
+#checker.blackList=AclChecker
+

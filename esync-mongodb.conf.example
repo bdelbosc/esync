@@ -1,0 +1,16 @@
+#nuxeo.mongodb.server=mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
+nuxeo.mongodb.server=mongodb://localhost:27017
+nuxeo.mongodb.dbname=nuxeo
+nuxeo.mongodb.collection=default
+
+elasticsearch.addressList=localhost:9300
+elasticsearch.indexName=nuxeo
+elasticsearch.clusterName=elastrix
+
+checker.pool.size=10
+
+## Skip these checkers
+## Especially the AclChecker must be disabled if you have lots of ACL and want a quick feedback
+#checker.blackList=AclChecker
+
+

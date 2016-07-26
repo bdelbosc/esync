@@ -1,16 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.nuxeo.tools</groupId>
   <artifactId>nuxeo-esync</artifactId>
-  <version>1.0-SNAPSHOT</version>
-
-  <properties>
-    <elasticsearch.version>1.1.2</elasticsearch.version>
-  </properties>
+  <version>1.2-SNAPSHOT</version>
 
   <dependencies>
     <dependency>
@@ -59,6 +53,11 @@
       <version>5.1.18</version>
     </dependency>
     <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongo-java-driver</artifactId>
+      <version>3.2.2</version>
+    </dependency>
+    <dependency>
       <groupId>net.sourceforge.jtds</groupId>
       <artifactId>jtds</artifactId>
       <version>1.3.0</version>
@@ -66,12 +65,12 @@
     <dependency>
       <groupId>org.elasticsearch</groupId>
       <artifactId>elasticsearch</artifactId>
-      <version>${elasticsearch.version}</version>
+      <version>1.5.2</version>
     </dependency>
     <dependency>
       <groupId>co.paralleluniverse</groupId>
       <artifactId>quasar-core</artifactId>
-      <version>0.5.0</version>
+      <version>0.7.4</version>
       <scope>compile</scope>
       <exclusions>
         <exclusion>
@@ -83,7 +82,7 @@
     <dependency>
       <groupId>co.paralleluniverse</groupId>
       <artifactId>capsule</artifactId>
-      <version>0.5.0</version>
+      <version>1.0.1</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency>
@@ -103,7 +102,11 @@
       <artifactId>reflections</artifactId>
       <version>0.9.9-RC1</version>
     </dependency>
-
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>1.0-PFD-1</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -112,33 +115,31 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.4</version>
+        <version>2.5</version>
         <configuration>
           <archive>
             <manifest>
               <mainClass>Capsule</mainClass>
-              <classpathPrefix>lib</classpathPrefix>
-              <addClasspath>true</addClasspath>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
               <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
             </manifest>
             <manifestEntries>
-              <Application-Class>Main</Application-Class>
+              <Application-Class>org.nuxeo.tools.esync.Main</Application-Class>
+              <Premain-Class>Capsule</Premain-Class>
               <Min-Java-Version>1.7.0</Min-Java-Version>
-              <JVM-Args/>
-              <System-Properties/>
-              <Java-Agents>co.paralleluniverse:quasar-core:0.5.0</Java-Agents>
+              <JVM-Args></JVM-Args>
+              <System-Properties></System-Properties>
+              <Java-Agents>co.paralleluniverse:quasar-core:0.7.4</Java-Agents>
             </manifestEntries>
           </archive>
           <descriptors>
             <descriptor>src/main/assembly/capsule-full.xml</descriptor>
-            <descriptor>src/main/assembly/capsule.xml</descriptor>
           </descriptors>
         </configuration>
         <executions>
@@ -153,5 +154,63 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>monitor</id>
+    </profile>
+    <!-- For use by Nuxeo internal QA -->
+    <profile>
+      <id>qa</id>
+      <repositories>
+        <repository>
+          <id>internal-releases</id>
+          <url>
+            http://mavenin.nuxeo.com/nexus/content/groups/internal-releases
+          </url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+        <repository>
+          <id>internal-snapshots</id>
+          <url>
+            http://mavenin.nuxeo.com/nexus/content/groups/internal-snapshots
+          </url>
+          <releases>
+            <enabled>false</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+            <updatePolicy>always</updatePolicy>
+          </snapshots>
+        </repository>
+      </repositories>
+      <distributionManagement>
+        <repository>
+          <id>public-releases</id>
+          <url>
+            http://mavenin.nuxeo.com/nexus/content/repositories/public-releases
+          </url>
+        </repository>
+        <snapshotRepository>
+          <id>public-snapshots</id>
+          <url>
+            http://mavenin.nuxeo.com/nexus/content/repositories/public-snapshots
+          </url>
+          <uniqueVersion>true</uniqueVersion>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+  </profiles>
+
+  <scm>
+    <connection>scm:git:git://github.com/nuxeo/esync.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:nuxeo/esync.git</developerConnection>
+    <url>http://nuxeo.github.io</url>
+  </scm>
+
 
 </project>

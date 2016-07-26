@@ -9,15 +9,23 @@ repository and the indexed content in Elasticsearch.
 
 # Install
 
+## Download
+
+Download the `nuxeo-esync-VERSION-capsule-full.jar` from [https://maven.nuxeo.org](https://maven.nuxeo.org/nexus/#nexus-search;gav~~nuxeo-esync~~~capsule-full).
+
 ## Building from sources
 
 Create the all in one jar:
 
-        mvn package
+    mvn package
 
 The jar is located here:
 
-        ./target/nuxeo-esync-VERSION-capsule-full.jar
+    ./target/nuxeo-esync-VERSION-capsule-full.jar
+
+## QA results
+
+[![Build Status](https://qa.nuxeo.org/jenkins/buildStatus/icon?job=tools_esync)](https://qa.nuxeo.org/jenkins/job/tools_esync/)
 
 # Usage
 
@@ -26,6 +34,7 @@ The jar is located here:
 Create a `/etc/esync.conf` or `~/.esync.conf` using one of the samples provided :
 - `esync-postgresql.conf.example`
 - `esync-mssql.conf.example`
+- `esync-mongodb.conf.example`
 
 You will need to configure the database and Elasticsearch access.
 
@@ -37,7 +46,7 @@ available.
      # using a default conf located in /etc/esync.conf or ~/.esync.conf
      java -jar /path/to/nuxeo-esync-$VERSION-capsule-full.jar
 
-	   # using an another config file
+     # using an another config file
      java -jar /path/to/nuxeo-esync-$VERSION-capsule-full.jar /path/to/config-file.conf
 
      # customizing the log
@@ -47,17 +56,19 @@ available.
 You can find the default [log4.xml here](https://github.com/bdelbosc/esync/blob/master/src/main/resources/log4j.xml)
 default log file is in `/tmp/trace.log`.
 
+
 # Checkers
 
 The tool runs concurrently different checkers.
 
-Checkers compare the reference database (expected) with the Elasticsearch content (actual).
+Checkers compare the reference database aka **expected** with the Elasticsearch content aka **actual**.
 
 They report different things:
 
-- Errors like a different number of documents
-- Missing documents in Elasticsearch
-- Trailing documents in Elasticsearch
+- Errors like a different number of documents, total or per document type
+- Missing or spurious document types in Elasticsearch
+- Missing documents ids in Elasticsearch
+- Spurious documents ids in Elasticsearch
 - Difference in document properties like ACL, path...
 
 
@@ -65,25 +76,28 @@ Here is a list of available checkers.
 
 ## Cardinality Checker
 
-This is a quick check to count the total number of documents in the db
-and Elasticsearch.
+This is a quick check to count the total number of documents in the db and Elasticsearch.
+There are 4 document counts:
+- documents without version and proxy
+- version documents
+- proxy documents
+- orphan documents other than version
 
 False positive cases:
-- this does not garantee that we have the same documents, just the same number.
+- this does not garantee that we have the same documents indexed, just the same number.
 
 False negative cases:
-- some system documents are not indexed (like Comments)
+- some system documents are not indexed (like CommentRelation or PublicationRelation)
 
 ## Type Cardinality Checker
 
-Checks the number of each document types.
+Checks the number of each document types for documents and versions
 
 False positive cases:
-- this does not garantee that we have the same documents, just the same number.
+- this does not guarantee that we have the same documents indexed, just the same number for a primary type.
 
 False negative cases:
-- some system documents are not indexed (like Comments), in
-  this case the total number is 0 on the Elasticsearch part
+- some system documents are not indexed and reported as missing type
 
 ## Type Document Lister
 
@@ -107,23 +121,6 @@ False positive cases:
 False negative cases:
 - none
 
-## Orphan Checker
-
-Cardinality checkers don't take in account document with no parentid.
-
-TODO: impl and document
-
-
 # About Nuxeo
 
-Nuxeo provides a modular, extensible Java-based
-[open source software platform for enterprise content management](http://www.nuxeo.com/en/products/ep)
-and packaged applications for
-[document management](http://www.nuxeo.com/en/products/document-management),
-[digital asset management](http://www.nuxeo.com/en/products/dam) and
-[case management](http://www.nuxeo.com/en/products/case-management). Designed
-by developers for developers, the Nuxeo platform offers a modern
-architecture, a powerful plug-in model and extensive packaging
-capabilities for building content applications.
-
-More information on: <http://www.nuxeo.com/>
+Nuxeo dramatically improves how content-based applications are built, managed and deployed, making customers more agile, innovative and successful. Nuxeo provides a next generation, enterprise ready platform for building traditional and cutting-edge content oriented applications. Combining a powerful application development environment with SaaS-based tools and a modular architecture, the Nuxeo Platform and Products provide clear business value to some of the most recognizable brands including Verizon, Electronic Arts, Netflix, Sharp, FICO, the U.S. Navy, and Boeing. Nuxeo is headquartered in New York and Paris. More information is available at www.nuxeo.com.
